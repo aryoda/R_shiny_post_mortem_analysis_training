@@ -1,11 +1,13 @@
 library(tryCatchLog)
 
-# stacktrace contains only code with known line numbers
-options(tryCatchLog.include.full.call.stack = FALSE)
-
 # creates a dump file for each error
 # (enable only to hunt bugs to avoid flooding your server disk ;-)
 options("tryCatchLog.write.error.dump.file" = TRUE)
+
+# stacktrace shall contain only code with known line numbers
+options(tryCatchLog.include.full.call.stack = FALSE)
+
+
 
 tryLog(
   {
