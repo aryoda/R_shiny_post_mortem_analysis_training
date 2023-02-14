@@ -3,9 +3,6 @@ library(shiny)
 # Keep the file name and line numbers of sourced files
 options(keep.source = TRUE)
 
-# Keep the file name and line numbers of sourced files
-options(keep.source = TRUE)
-
 # Define UI for application that draws a histogram
 ui <- fluidPage(
 
