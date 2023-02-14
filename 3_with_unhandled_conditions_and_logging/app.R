@@ -47,7 +47,7 @@ server <- function(input, output) {
     
     output$distPlot <- renderPlot({
       
-        flog.info("Begin of renderPlot reactive function... (bins=%i)", input$bins)
+        flog.info("Begin of renderPlot (bins=%i)", input$bins)
         # similar to: sprintf("bins=%i", input$bins)
 
         # generate bins based on input$bins from ui.R
@@ -59,7 +59,7 @@ server <- function(input, output) {
         
         source("script_with_error.R", local = TRUE)
 
-        flog.info("End of renderPlot reactive function...")
+        flog.info("End of renderPlot")
     })
 
     flog.info("End of server function...")

@@ -15,7 +15,7 @@ ff <- function(y) {
 
 fff <- function(z) {
   print(paste("z =", z))
- if(z > 4) stop("z is too big\n")
+  if(z > 4) stop("z is too big\n")
 }
 
 
