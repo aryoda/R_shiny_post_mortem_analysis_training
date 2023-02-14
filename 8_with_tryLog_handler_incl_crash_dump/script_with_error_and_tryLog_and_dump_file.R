@@ -11,6 +11,7 @@ options(tryCatchLog.include.full.call.stack = FALSE)
 
 tryLog(
   {
+    i.bins <- input$bins  # use local vars for better debugging
     if (input$bins > 40) {
       stop("Too many bins!")
       # Note that the error is shown as warning in the console:

@@ -5,5 +5,6 @@
 
 
 load("dump.rda")
+# load("dump_with_local_var_for_input.rda")
 
 debugger(last.dump)
