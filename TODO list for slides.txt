@@ -1,0 +1,130 @@
+Motivation using examples:
+
+During development
+
+In PRD/when deployed (remote!)
+You can't reproduce it (random error or bound to certain infrastructure)
+
+Overview: When to use what
+
+----
+
+There is no interactive remote debugging feature known to me (like eg. other programming languages allow - eg. with gdb - GNU debugger)
+
+https://stackoverflow.com/questions/31920286/effectively-debugging-shiny-apps
+https://stackoverflow.com/questions/32222935/find-source-of-warning-in-shiny-app
+
+Super Shiny-Intro !!!:
+https://debruine.github.io/shinyintro
+
+9 Debugging and error handling | Building Web Apps with R Shiny (debruine.github.io)<https://debruine.github.io/shinyintro/debugging.html>
+
+You've probably experienced the greyed out screen of a crashed app more than enough now.
+
+Try the server on shinyapps.io ????
+
+Shiny - Debugging Shiny applications (rstudio.com)
+
+https://shiny.rstudio.com/articles/debugging.html
+
+
+
+  1.  Debugging
+
+Pausing execution of your program, at a place you choose, to inspect its state as each following statement is executed. Best used when you suspect where a problem lies or need to verify the state around a particular section of code.
+
+  1.  Tracing
+
+Collecting information as your program runs, without pausing it, for later analysis. Best used when you're diagnosing systemic issues (for instance, reactivity), when you can't debug, or when frequent interruption is inappropriate.
+
+  1.  Error handling
+
+Finding the source of errors (both on the client and server side) and ascertaining their cause.
+
+Pre-requs: Understand try and tryCatch
+
+Local Dev vs. running on server
+
+In R-Code vs. HTML/JavaScript code
+
+Robustness requires try* but causes loss of traceback depth!
+
+Most favorite logging frameworks + advantages (thread id + variable values)
+
+Blue screen of death (BSOD) -> memory dump (core dump;
+
+Post-mortem vs. graceful recovery
+
+Best practice: Logging level to control output verbosity according to the purpose (testing, hunting, stable prd)
+
+1          Shiny Server Professional v1.5.20 Administrator's Guide
+
+Shiny Server v1.5.20 Configuration Reference (posit.co)<https://docs.posit.co/shiny-server/#server-log>
+
+Logging and Analytics section in the server admin doc:
+Shiny Server v1.5.20 Configuration Reference (posit.co)<https://docs.posit.co/shiny-server/#logging-and-analytics>
+
+
+
+
+Print-Error-Function (local and on server):
+https://debruine.github.io/shinyintro/debugging.html#rstudio-console-messages
+-> schreibt beim Server in Browser-Console???
+        # display debugging messages in R (if local) 
+        # and in the console log (if running in shiny)
+        debug_msg <- function(...) {
+          is_local <- Sys.getenv('SHINY_PORT') == ""
+          in_shiny <- !is.null(shiny::getDefaultReactiveDomain())
+          txt <- toString(list(...))
+          if (is_local) message(txt)
+          if (in_shiny) shinyjs::runjs(sprintf("console.debug(\"%s\")", txt))
+        }
+        
+  
+https://shiny.rstudio.com/articles/debugging.html   
+using the cat command in your Shiny application to print to standard error (stderr())   
+        cat(file=stderr(), "drawing histogram with", input$bins, "bins", "\n")
+A note about stderr(): in most cases cat("my output") (i.e. printing to standard out) will work correctly,
+but in others (e.g. inside a renderPrint, which uses capture.output to redirect output),
+it won’t, so we recommend always sending trace output to stderr().
+
+Tracing on Shiny Server
+
+    The cat(file=stderr(), ..., "\n")
+    
+    
+    
+See list of shiny options:
+https://shiny.rstudio.com/reference/shiny/latest/shinyoptions
+
+    
+mechanism also works in Shiny Server. The trace output will be placed in a log under:
+
+        /var/log/shiny-server/*.log
+        
+cat() Caveats
+
+One thing to keep in mind while using cat() to trace values at runtime is that Shiny doesn’t give it special treatment–if your cat() expression references reactive values, a dependency will be created. This may cause your application to behave differently with the cat() statement than without it, which is obviously undesirable.
+
+Make certain that any reactives referenced by the cat() statement are already referenced elsewhere in the observer or reactive in which it resides.
+
+https://shiny.rstudio.com/articles/debugging.html
+Thankfully the latest version of Shiny (0.13.0 at time of writing) includes a feature
+which automatically dumps not only the error but a stack trace indicating where the error occurred to the console.
+
+
+options(shiny.fullstacktrace = TRUE)  # now you see also shiny-internal calls!
+Warning: Error in renderPlot: too many bins
+Stack trace (innermost first):
+    76: renderPlot [server.R#20]
+    68: output$distPlot
+     1: shiny::runApp
+What are those numbers before the function names (76, 68, and 1)?
+They’re the indices into the call stack, which in this case contains nearly 80 calls.
+Most of those calls, though, are Shiny internals, which are hidden to make the stack trace easier to read.
+In the vast majority of cases, these internals won’t be relevant to your error.
+
+
+
+
+
